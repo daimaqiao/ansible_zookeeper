@@ -1,0 +1,46 @@
+---
+remote_local: /opt/local
+local_pkg:    package
+remote_dl:    true
+
+# zookeeper:
+zookeeper_version:  3.4.9
+zookeeper_name:     "zookeeper-{{zookeeper_version}}"
+zookeeper_pkgname:  "{{zookeeper_name}}.tar.gz"
+zookeeper_dlurl:    "http://mirrors.tuna.tsinghua.edu.cn/apache/zookeeper/{{zookeeper_name}}/{{zookeeper_pkgname}}"
+zookeeper_user:     zookeeper
+zookeeper_group:    zookeeper
+zookeeper_home:     "{{remote_local}}/{{zookeeper_name}}"
+zookeeper_archive:  "{{local_pkg}}/{{zookeeper_pkgname}}"
+zookeeper_checkme:  "{{zookeeper_home}}/bin/zkServer.sh"
+zookeeper_start:    "{{zookeeper_home}}/start.sh"
+zookeeper_logs:     "{{zookeeper_home}}/logs"
+zookeeper_datadir:  /var/lib/zookeeeper
+zookeeper_logdir:   /var/log/zookeeper
+zookeeper_log4jdir: /var/log/zookeeper/logs
+# default zookeeper host&group variables, can be overrided
+zookeeper_host: ""
+zookeeper_port: 2181
+zookeeper_mode: "standalone"
+# zookeeper.properties
+zookeeper_server_src:         zookeeper/zoo.cfg.j2
+zookeeper_server_dest:        "{{zookeeper_home}}/conf/zoo.cfg"
+zookeeper_server_id_src:      zookeeper/myid.j2
+zookeeper_server_id_dest:     "{{zookeeper_datadir}}/myid"
+zookeeper_server__dataDir:    "{{zookeeper_datadir}}"
+zookeeper_server__dataLogDir: "{{zookeeper_logdir}}"
+zookeeper_server__clientPort: "{{zookeeper_port}}"
+zookeeper_server__autopurge_snapRetainCount: 10
+zookeeper_server__autopurge_purgeInterval:   24
+# zookeeper.start
+zookeeper_start_src:    zookeeper/start.sh.j2
+zookeeper_start_dest:   "{{zookeeper_home}}/start.sh"
+# zookeeper.service
+zookeeper_systemd_src:  zookeeper/zookeeper.service.j2
+zookeeper_systemd_dest: /etc/systemd/system/zookeeper.service
+# log4j.properties
+zookeeper_log4j_src:        zookeeper/log4j.properties.j2
+zookeeper_log4j_dest:       "{{zookeeper_home}}/conf/log4j.properties"
+zookeeper_log4j__logdir:    "{{zookeeper_log4jdir}}"
+##
+

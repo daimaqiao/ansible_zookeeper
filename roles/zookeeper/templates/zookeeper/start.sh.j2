@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# 设置zookeeper配置文件位置
+export ZOOCFGDIR="{{zookeeper_home}}/conf"
+# 设置zookeeper输出日志位置
+export ZOO_LOG_DIR="{{zookeeper_log4jdir}}"
+# 设置zookeeper输出日志类型
+export ZOO_LOG4J_PROP="INFO, CONSOLE, ROLLINGFILE, TRACEFILE"
+
+# 在前台启动zookeeper
+{{zookeeper_home}}/bin/zkServer.sh start-foreground
+

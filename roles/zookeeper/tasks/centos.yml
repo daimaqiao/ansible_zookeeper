@@ -1,0 +1,22 @@
+--- # centos.yml
+- name: check 'CentOS Linux release 7'
+  shell: cat /etc/redhat-release |grep 'CentOS Linux release 7'
+  register: redhat_release
+  tags: centos
+- name: show redhat_release
+  debug:
+    var: redhat_release.stdout
+- name: assert 'CentOS Linux release 7'
+  assert:
+    that: redhat_release.rc == 0
+    msg: 'OS is NOT CentOS Linux release 7'
+  tags: centos
+
+- name: initialize centos
+  yum: name={{item}} state=present
+  with_items:
+    - wget
+    - java-1.8.0-openjdk
+    - nc
+  tags: centos
+

@@ -1,0 +1,26 @@
+[zookeeper]
+# zookeeper_mode: {可选：standalone | replicated，默认standalone}
+# zookeeper_port: {可选：服务端口，默认2181}
+# zookeeper_host: {可选：有效的本机IP，用于侦听绑定}
+# remote_dl:	  {可选：默认从第三方服务器下载.tar.gz包，局域网内部为加快部署时，提前将.tar.gz包放到package目录，并配置remote_dl=false}
+#
+# zookeeper_id:      {仅集群部署时（mode=replicated）必选：不重复的数字（1~255）}
+# zookeeper_cluster: {仅集群部署时（mode=replicated）必选：集群内服务器配置列表，服务器间以逗号分隔}
+#
+# 独立部署（standalone）方式和集群部署（replicated）方式只能二选一
+# 集群部署时，必须指定zookeeper_mode=replicated
+# 集群内每台服务器的zookeeper_cluster都基本一致，可以在组变量区域内“[zookeeper:vars]”只配置一份就可以了
+# 如：zookeeper_cluster="server.241=192.168.56.241:2888:3888,server.242=192.168.56.242:2888:3888,server.243=192.168.56.243:2888:3888"
+# 当然，也可以选择更加灵活的，每个host地址后面配置各自的zookeeper_cluster
+#
+
+192.168.56.241 zookeeper_mode=standalone
+
+#192.168.56.241 zookeeper_mode=replicated zookeeper_id=241 zookeeper_cluster="server.241=192.168.56.241:2888:3888,server.242=192.168.56.242:2888:3888,server.243=192.168.56.243:2888:3888"
+#192.168.56.242 zookeeper_mode=replicated zookeeper_id=242 zookeeper_cluster="server.241=192.168.56.241:2888:3888,server.242=192.168.56.242:2888:3888,server.243=192.168.56.243:2888:3888"
+#192.168.56.243 zookeeper_mode=replicated zookeeper_id=243 zookeeper_cluster="server.241=192.168.56.241:2888:3888,server.242=192.168.56.242:2888:3888,server.243=192.168.56.243:2888:3888"
+
+[zookeeper:vars]
+ansible_user=abc
+#ansible_become_pass=no-password
+

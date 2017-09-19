@@ -1,0 +1,112 @@
+--- # zookeeper.yml
+- name: initialize {{remote_local}}
+  file: path={{remote_local}} state=directory
+  tags: zookeeper
+
+# user & group
+- name: set group {{zookeeper_group}}
+  group: name={{zookeeper_group}} system=yes
+  tags: zookeeper
+- name: set user {{zookeeper_user}}
+  user: name={{zookeeper_user}} group={{zookeeper_group}} system=yes
+  tags: zookeeper
+
+# package
+- name: downloading from {{zookeeper_dlurl}}
+  unarchive: src={{zookeeper_dlurl}} dest={{remote_local}} creates={{zookeeper_checkme}} owner={{zookeeper_user}} group={{zookeeper_group}} remote_src=yes
+  when: remote_dl
+  tags: zookeeper
+- name: unarchive {{zookeeper_pkgname}}
+  unarchive: src={{zookeeper_archive}} dest={{remote_local}} creates={{zookeeper_checkme}} owner={{zookeeper_user}} group={{zookeeper_group}} remote_src=no
+  when: not remote_dl
+  tags: zookeeper
+
+# working dirs
+- name: setup logs {{zookeeper_logs}}
+  file: path={{zookeeper_logs}} state=directory owner={{zookeeper_user}} group={{zookeeper_group}}
+  tags: zookeeper 
+- name: setup datadir {{zookeeper_datadir}}
+  file: path={{zookeeper_datadir}} state=directory owner={{zookeeper_user}} group={{zookeeper_group}}
+  tags: zookeeper
+- name: setup logdir {{zookeeper_logdir}}
+  file: path={{zookeeper_logdir}} state=directory owner={{zookeeper_user}} group={{zookeeper_group}}
+  tags: zookeeper
+- name: setup log4jdir {{zookeeper_log4jdir}}
+  file: path={{zookeeper_log4jdir}} state=directory owner={{zookeeper_user}} group={{zookeeper_group}}
+  tags: zookeeper
+
+# configurations
+#- name: backup {{zookeeper_server_dest}}
+#  command: mv {{zookeeper_server_dest}} {{zookeeper_server_dest}}.backup creates={{zookeeper_server_dest}}.backup
+#  tags: zookeeper
+- name: update {{zookeeper_server_dest}}
+  template: src={{zookeeper_server_src}} dest={{zookeeper_server_dest}}
+  tags: zookeeper
+  notify:
+  - restart zookeeper
+- name: clean {{zookeeper_server_id_dest}}
+  command: rm {{zookeeper_server_id_dest}} removes={{zookeeper_server_id_dest}}
+  when: zookeeper_mode != "replicated"
+  tags: zookeeper
+- name: update {{zookeeper_server_id_dest}}
+  template: src={{zookeeper_server_id_src}} dest={{zookeeper_server_id_dest}}
+  when: zookeeper_mode == "replicated"
+  tags: zookeeper
+  notify:
+  - restart zookeeper
+- name: update {{zookeeper_start_dest}}
+  template: src={{zookeeper_start_src}} dest={{zookeeper_start_dest}}
+  tags: zookeeper
+  notify:
+  - restart zookeeper
+- name: setup {{zookeeper_start_dest}}
+  file: path={{zookeeper_start_dest}} mode="a+x"
+  tags: zookeeper
+
+- name: backup {{zookeeper_log4j_dest}}
+  command: mv {{zookeeper_log4j_dest}} {{zookeeper_log4j_dest}}.backup creates={{zookeeper_log4j_dest}}.backup
+  tags: zookeeper
+- name: update {{zookeeper_log4j_dest}}
+  template: src={{zookeeper_log4j_src}} dest={{zookeeper_log4j_dest}}
+  tags: zookeeper
+  notify:
+  - restart zookeeper
+
+# zookeeper.service
+- name: check {{zookeeper_systemd_dest}}
+  stat: path=/etc/systemd/system/
+  register: systemd
+  tags: zookeeper
+- name: update {{zookeeper_systemd_dest}}
+  template: src={{zookeeper_systemd_src}} dest={{zookeeper_systemd_dest}}
+  when: systemd.stat.exists
+  tags: zookeeper
+  notify:
+  - restart zookeeper
+- name: daemon-reload
+  command: systemctl daemon-reload
+  when: systemd.stat.exists
+  tags: zookeeper
+
+# start zookeeper.service
+- name: check {{zookeeper_systemd_dest}}
+  stat: path={{zookeeper_systemd_dest}}
+  register: zookeeper_systemd
+  tags: zookeeper
+- name: start {{zookeeper_systemd_dest}}
+  service: name=zookeeper state=started enabled=yes
+  register: zookeeper_started
+  when: zookeeper_systemd.stat.exists
+  tags: zookeeper
+
+- name: check zookeeper
+  wait_for:
+    port: "{{zookeeper_port}}"
+    delay: 10
+    timeout: 45
+  when:
+  - zookeeper_systemd.stat.exists
+  - zookeeper_started.changed
+  - zookeeper_started.state == "started"
+  tags: zookeeper
+
