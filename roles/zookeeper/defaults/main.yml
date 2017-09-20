@@ -1,5 +1,8 @@
 ---
-remote_local: /opt/local
+remote_base:  ""
+remote_local: "{{remote_base}}/opt/local"
+remote_lib:   "{{remote_base}}/var/lib"
+remote_log:   "{{remote_base}}/var/log"
 local_pkg:    package
 remote_dl:    true
 
@@ -15,9 +18,9 @@ zookeeper_archive:  "{{local_pkg}}/{{zookeeper_pkgname}}"
 zookeeper_checkme:  "{{zookeeper_home}}/bin/zkServer.sh"
 zookeeper_start:    "{{zookeeper_home}}/start.sh"
 zookeeper_logs:     "{{zookeeper_home}}/logs"
-zookeeper_datadir:  /var/lib/zookeeeper
-zookeeper_logdir:   /var/log/zookeeper
-zookeeper_log4jdir: /var/log/zookeeper/logs
+zookeeper_datadir:  "{{remote_lib}}/zookeeper"
+zookeeper_logdir:   "{{remote_log}}/zookeeper"
+zookeeper_log4jdir: "{{remote_log}}/zookeeper/logs"
 # default zookeeper host&group variables, can be overrided
 zookeeper_host: ""
 zookeeper_port: 2181

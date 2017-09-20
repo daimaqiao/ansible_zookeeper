@@ -4,6 +4,11 @@
 # zookeeper_host: {可选：有效的本机IP，用于侦听绑定}
 # remote_dl:	  {可选：默认从第三方服务器下载.tar.gz包，局域网内部为加快部署时，提前将.tar.gz包放到package目录，并配置remote_dl=false}
 #
+# remote_base:    {可选：默认为空（根目录），类似于指定路径的prefix，如：“/data”表示远程安装到/data目录中}
+# remote_lib:     {可选：默认为/var/lib，相对于remote_base，可以单独指定绝对路径用于remote_lib}
+# remote_log:     {可选：默认为/var/log，相对于remote_base，可以单独指定绝对路径用于remote_log}
+# remote_local:   {可选：默认为/opt/local，相对remote_base，可以单独指定绝对路径用于remote_local}
+#
 # zookeeper_id:      {仅集群部署时（mode=replicated）必选：不重复的数字（1~255）}
 # zookeeper_cluster: {仅集群部署时（mode=replicated）必选：集群内服务器配置列表，服务器间以逗号分隔}
 #

@@ -1,4 +1,10 @@
 --- # zookeeper.yml
+- name: initialize {{remote_lib}}
+  file: path={{remote_lib}} state=directory
+  tags: zookeeper
+- name: initialize {{remote_log}}
+  file: path={{remote_lib}} state=directory
+  tags: zookeeper
 - name: initialize {{remote_local}}
   file: path={{remote_local}} state=directory
   tags: zookeeper
@@ -40,7 +46,7 @@
 #  command: mv {{zookeeper_server_dest}} {{zookeeper_server_dest}}.backup creates={{zookeeper_server_dest}}.backup
 #  tags: zookeeper
 - name: update {{zookeeper_server_dest}}
-  template: src={{zookeeper_server_src}} dest={{zookeeper_server_dest}}
+  template: src={{zookeeper_server_src}} dest={{zookeeper_server_dest}} owner={{zookeeper_user}} group={{zookeeper_group}}
   tags: zookeeper
   notify:
   - restart zookeeper
@@ -49,13 +55,13 @@
   when: zookeeper_mode != "replicated"
   tags: zookeeper
 - name: update {{zookeeper_server_id_dest}}
-  template: src={{zookeeper_server_id_src}} dest={{zookeeper_server_id_dest}}
+  template: src={{zookeeper_server_id_src}} dest={{zookeeper_server_id_dest}} owner={{zookeeper_user}} group={{zookeeper_group}}
   when: zookeeper_mode == "replicated"
   tags: zookeeper
   notify:
   - restart zookeeper
 - name: update {{zookeeper_start_dest}}
-  template: src={{zookeeper_start_src}} dest={{zookeeper_start_dest}}
+  template: src={{zookeeper_start_src}} dest={{zookeeper_start_dest}} owner={{zookeeper_user}} group={{zookeeper_group}}
   tags: zookeeper
   notify:
   - restart zookeeper
@@ -67,7 +73,7 @@
   command: mv {{zookeeper_log4j_dest}} {{zookeeper_log4j_dest}}.backup creates={{zookeeper_log4j_dest}}.backup
   tags: zookeeper
 - name: update {{zookeeper_log4j_dest}}
-  template: src={{zookeeper_log4j_src}} dest={{zookeeper_log4j_dest}}
+  template: src={{zookeeper_log4j_src}} dest={{zookeeper_log4j_dest}} owner={{zookeeper_user}} group={{zookeeper_group}}
   tags: zookeeper
   notify:
   - restart zookeeper

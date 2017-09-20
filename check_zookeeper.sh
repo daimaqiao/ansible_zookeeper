@@ -1,6 +1,6 @@
 #!/bin/sh
 
-WORDS="ruok stat"
+WORDS="ruok stat mntr"
 
 for W in $WORDS; do
 
